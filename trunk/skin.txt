@@ -1,0 +1,10 @@
+//Skin stuff
+Filename=C:\Documents and Settings\Administrator\My Documents\CSharp\mmbno\images\mmw.png
+Height=40
+Width=27
+//Navi stuff
+Name=Megaman
+Operator=Lan
+//Credit
+Spriter=Capcom
+SkinCreator=Spikeman
