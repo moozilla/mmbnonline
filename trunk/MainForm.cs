@@ -1,14 +1,22 @@
 /*
  * Created with SharpDevelop by Spikeman
  * 
- * Currently Working On:
- * - Frame timing
- * 
  * Todo:
  * - Better animation (releastic frames)
  * - Diagonally movement
  * - Fix flicker
  * - Fix skin, make sure animations are same as in game
+ * 
+ * Newset Updates (September 28, 2006):
+ * - Fixed framesBeforeUpdate error in merge
+ * - Changed interval on timer to be a bit more accurate (it was too slow before..)
+ * - Added drawing buffer.. fixed flicker! It looks SO much better now!
+ * 
+ * Things to be fixed/done:
+ * - You move too fast going diagonally and too slow going up or down.. fix this
+ * - Fix it so you can switch opposite directions without stopping (left to right, up to down)
+ * - Add background
+ * - Make map scroll with navi
  */
 
 /*
@@ -22,10 +30,6 @@
  * Bugs to fix:
  * - The key hook is working on global status, that means it takes keys even outside the game window (soon to be fixed/changed)
  * 
- * Please fix/work on:
- * - Make it so you go to standing only if no other keys are pressed (not just on keyUp)
- * - Fix graphics, they flicker a lot.. maybe draw all to a buffer then buffer to the window?
- * - Diagonal Movement
  */
 using System;
 using System.Collections.Generic;
@@ -64,9 +68,11 @@ namespace MMBNO
 		private int framesBeforeUpdate; //how many frames waits until passing to the next animation image
 		
 		private bool isStanding;
-		private int hMove; //tells direction it mores horizontally
-		private int vMove; //tells direction it mores horizontally
+		private int hMove; //tells direction it mores horizontally 0=no movement 1=left 2=right
+		private int vMove; //tells direction it mores horizontally 0=no movement 1=up 2=down
 
+		private BufferedGraphics gBuffer; //creates a buffer for graphics to be drawn to
+										  //it is then drawn to the screen all at once, this stops flickering
 		UserActivityHook keyHook; // this creates a structure that it's only job is to catch the key that are pressed
 		public MainForm()
 		{
@@ -93,6 +99,10 @@ namespace MMBNO
 			keyHook= new UserActivityHook();
 			keyHook.KeyDown+=new KeyEventHandler(MyKeyDown);
 			keyHook.KeyUp+=new KeyEventHandler(MyKeyUp);
+			
+			BufferedGraphicsContext gContext = BufferedGraphicsManager.Current; //set up buffer
+			gContext.MaximumBuffer = new Size(240,160); //size of screen
+			gBuffer = gContext.Allocate(this.CreateGraphics(), new Rectangle(0,0,this.Width,this.Height)); //allocate buffer
 		}
 		
 		protected override void OnPaint(PaintEventArgs pe)
@@ -100,8 +110,9 @@ namespace MMBNO
 			// draws map and navi whenever a window is refreshed
 			Graphics g = pe.Graphics;
 			//g.Clear(Color.Black);
-			drawMap(g);
-			drawNavi(g);
+			drawMap(gBuffer.Graphics);
+			drawNavi(gBuffer.Graphics);
+			gBuffer.Render(pe.Graphics); //draw buffer to window
 		}
 		
 		
@@ -120,18 +131,6 @@ namespace MMBNO
 					break;
 				case Keys.NumPad2:
 					mapOffsetY+=10;
-					break;
-				case Keys.OemMinus:
-					naviDir--;
-					break;
-				case Keys.Oemplus:
-					naviDir++;
-					break;
-				case Keys.OemOpenBrackets: //[
-					naviFrame--;
-					break;
-				case Keys.Oem6: //]
-					naviFrame++;
 					break;
 				//end debug
 				case Keys.Left:
@@ -153,9 +152,6 @@ namespace MMBNO
 				default:
 					break;
 			}
-			//Graphics g = this.CreateGraphics();
-			//drawMap(g);
-			//drawNavi(g);
 		}
 		public void MyKeyUp(object sender, KeyEventArgs e)
 		{
@@ -181,7 +177,6 @@ namespace MMBNO
 		}
 		private void drawMap(Graphics g)
 		{
-			//figured out these by looking at the sdk
 			Image mapImg = pnlMap.BackgroundImage;
 			Rectangle rect = new Rectangle(0,0,240,160);
 			g.DrawImage(mapImg,rect,mapOffsetX,mapOffsetY,240,160,GraphicsUnit.Pixel);
@@ -205,29 +200,28 @@ namespace MMBNO
 			if(framesBeforeUpdate>0) {
 				if (hMove==1)
 				{
-				  	naviX--;
 					naviDir=2;
+				  	naviX-=2;
 					widthToPass = -naviWidth; //makes the navi looks to the left
-					naviFrame++;
 				}
 				else if(hMove==2)
 				{
-					naviX++;
 					naviDir=2;
-					naviFrame++;
+					naviX+=2;
 					widthToPass = naviWidth;
 				}
 				if(vMove==1)
 				{
-					naviY--;
 					naviDir=4;
-					naviFrame++;
+					naviY--;
 				}
 				else if(vMove==2)
-				{	naviY++;
+				{	
 					naviDir=0;
-					naviFrame++;
+					naviY++;
 				}
+				if(hMove>0&&vMove==2) {naviDir=1;}
+				if(hMove>0&&vMove==1) {naviDir=3;}
 				framesBeforeUpdate--;
 			}
 			else
@@ -237,12 +231,14 @@ namespace MMBNO
 					naviFrame++;
 					if (naviFrame>naviNumFrames)
 						naviFrame = 1;
-					framesBeforeUpdate=6;
+						framesBeforeUpdate=6;
 				} else {
 					naviFrame=0;
 				}
 			}
-			this.OnPaint(new PaintEventArgs(this.CreateGraphics(),this.ClientRectangle));
+			Graphics g = this.CreateGraphics();
+			this.OnPaint(new PaintEventArgs(g,this.ClientRectangle));
+			g.Dispose();
 		}
 	}
 }

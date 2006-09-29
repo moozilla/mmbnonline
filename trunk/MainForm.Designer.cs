@@ -48,7 +48,7 @@ namespace MMBNO
 			this.pnlMap.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pnlMap.BackgroundImage")));
 			this.pnlMap.Location = new System.Drawing.Point(12, 12);
 			this.pnlMap.Name = "pnlMap";
-			this.pnlMap.Size = new System.Drawing.Size(28, 31);
+			this.pnlMap.Size = new System.Drawing.Size(38, 43);
 			this.pnlMap.TabIndex = 0;
 			this.pnlMap.Visible = false;
 			// 
@@ -64,7 +64,7 @@ namespace MMBNO
 			// frameTimer
 			// 
 			this.frameTimer.Enabled = true;
-			this.frameTimer.Interval = 41;
+			this.frameTimer.Interval = 17;
 			this.frameTimer.Tick += new System.EventHandler(this.FrameTimerTick);
 			// 
 			// MainForm
