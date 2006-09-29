@@ -36,9 +36,11 @@ namespace MMBNO
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.pnlMap = new System.Windows.Forms.Panel();
 			this.pnlNavi = new System.Windows.Forms.Panel();
+			this.frameTimer = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
 			// 
 			// pnlMap
@@ -59,6 +61,12 @@ namespace MMBNO
 			this.pnlNavi.TabIndex = 1;
 			this.pnlNavi.Visible = false;
 			// 
+			// frameTimer
+			// 
+			this.frameTimer.Enabled = true;
+			this.frameTimer.Interval = 20;
+			this.frameTimer.Tick += new System.EventHandler(this.FrameTimerTick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -71,6 +79,7 @@ namespace MMBNO
 			this.Text = "MMBNO";
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.Timer frameTimer;
 		private System.Windows.Forms.Panel pnlNavi;
 		private System.Windows.Forms.Panel pnlMap;
 }

@@ -1,11 +1,14 @@
 /*
  * Created with SharpDevelop by Spikeman
+ * 
+ * Currently Working On:
+ * - Frame timing
+ * 
  * Todo:
- * - Put timer so animation is at right speed, and one so he goes back to standing right
- * - Fix skin, make sure animations are same as in game
  * - Better animation (releastic frames)
  * - Diagonally movement
  * - Fix flicker
+ * - Fix skin, make sure animations are same as in game
  */
 
 /*
@@ -18,6 +21,11 @@
  * 
  * Bugs to fix:
  * - The key hook is working on global status, that means it takes keys even outside the game window (soon to be fixed/changed)
+ * 
+ * Please fix/work on:
+ * - Make it so you go to standing only if no other keys are pressed (not just on keyUp)
+ * - Fix graphics, they flicker a lot.. maybe draw all to a buffer then buffer to the window?
+ * - Diagonal Movement
  */
 using System;
 using System.Collections.Generic;
@@ -52,7 +60,11 @@ namespace MMBNO
 		private int naviWidth;
 		private int naviHeight;
 		private int naviNumFrames;
-
+		
+		private int framesBeforeUpdate;
+		
+		private bool isStanding;
+		
 		UserActivityHook keyHook; // this creates a structure that it's only job is to catch the key that are pressed
 		public MainForm()
 		{
@@ -71,6 +83,11 @@ namespace MMBNO
 			widthToPass = naviWidth;
 			naviHeight = 40;
 			naviNumFrames = 6; //doesn't count standing still
+			
+			framesBeforeUpdate=6; //how many frames each walking step takes
+			
+			isStanding=true;
+			
 			keyHook= new UserActivityHook();
 			keyHook.KeyDown+=new KeyEventHandler(MyKeyDown);
 			keyHook.KeyUp+=new KeyEventHandler(MyKeyUp);
@@ -80,7 +97,7 @@ namespace MMBNO
 		{
 			// draws map and navi whenever a window is refreshed
 			Graphics g = pe.Graphics;
-			g.Clear(Color.Black);
+			//g.Clear(Color.Black);
 			drawMap(g);
 			drawNavi(g);
 		}
@@ -116,42 +133,35 @@ namespace MMBNO
 					break;
 				//end debug
 				case Keys.Left:
-					naviX--;
 					naviDir=2;
 					widthToPass = -naviWidth; //makes the navi looks to the left
-					naviFrame++;
+					isStanding=false;
 					break;
 				case Keys.Right:
-					naviX++;
 					naviDir=2;
-					naviFrame++;
 					widthToPass = naviWidth;
+					isStanding=false;
 					break;
 				case Keys.Up:
-					naviY--;
 					naviDir=4;
-					naviFrame++;
+					isStanding=false;
 					break;
 				case Keys.Down:
-					naviY++;
 					naviDir=0;
-					naviFrame++;
+					isStanding=false;
 					break;
 				default:
 					break;
 			}
-			if (naviFrame>naviNumFrames)
-				naviFrame = 1;
-			Graphics g = this.CreateGraphics();
-			drawMap(g);
-			drawNavi(g);
+			//Graphics g = this.CreateGraphics();
+			//drawMap(g);
+			//drawNavi(g);
 		}
 		public void MyKeyUp(object sender, KeyEventArgs e)
 		{
-				naviFrame = 0;
-			Graphics g = this.CreateGraphics();
-			drawMap(g);
-			drawNavi(g);
+			//This should only happen if no keys are down..
+			isStanding=true;
+			framesBeforeUpdate = 2;
 		}
 		private void drawMap(Graphics g)
 		{
@@ -172,6 +182,40 @@ namespace MMBNO
 			else
 			{rect = new Rectangle(naviX,naviY,widthToPass,naviHeight);}
 			g.DrawImage(naviImg,rect,naviFrame*naviWidth,naviDir*naviHeight,naviWidth,naviHeight,GraphicsUnit.Pixel);
+		}
+		
+		void FrameTimerTick(object sender, System.EventArgs e)
+		{
+			if(framesBeforeUpdate>0) {
+				switch(naviDir) {
+				case 0:
+					naviY++;
+					break;
+				case 2:
+					if(naviWidth==widthToPass) //test if left or right
+						naviX++;
+					else
+						naviX--;
+					break;
+				case 4:
+					naviY--;
+					break;
+			}
+				framesBeforeUpdate--;
+			}
+			else
+			{
+				if(!isStanding)	//don't animate if standing still
+				{
+					naviFrame++;
+					if (naviFrame>naviNumFrames)
+						naviFrame = 1;
+					framesBeforeUpdate=6;
+				} else {
+					naviFrame=0;
+				}
+			}
+			this.OnPaint(new PaintEventArgs(this.CreateGraphics(),this.ClientRectangle));
 		}
 	}
 }
