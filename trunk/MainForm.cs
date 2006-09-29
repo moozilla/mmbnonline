@@ -61,10 +61,12 @@ namespace MMBNO
 		private int naviHeight;
 		private int naviNumFrames;
 		
-		private int framesBeforeUpdate;
+		private int framesBeforeUpdate; //how many frames waits until passing to the next animation image
 		
 		private bool isStanding;
-		
+		private int hMove; //tells direction it mores horizontally
+		private int vMove; //tells direction it mores horizontally
+
 		UserActivityHook keyHook; // this creates a structure that it's only job is to catch the key that are pressed
 		public MainForm()
 		{
@@ -133,21 +135,19 @@ namespace MMBNO
 					break;
 				//end debug
 				case Keys.Left:
-					naviDir=2;
-					widthToPass = -naviWidth; //makes the navi looks to the left
+					hMove=1;
 					isStanding=false;
 					break;
 				case Keys.Right:
-					naviDir=2;
-					widthToPass = naviWidth;
+					hMove=2;
 					isStanding=false;
 					break;
 				case Keys.Up:
-					naviDir=4;
+					vMove=1;
 					isStanding=false;
 					break;
 				case Keys.Down:
-					naviDir=0;
+					vMove=2;
 					isStanding=false;
 					break;
 				default:
@@ -159,9 +159,25 @@ namespace MMBNO
 		}
 		public void MyKeyUp(object sender, KeyEventArgs e)
 		{
-			//This should only happen if no keys are down..
-			isStanding=true;
-			framesBeforeUpdate = 2;
+			switch(e.KeyCode) {
+				case Keys.Left:
+					hMove=0;
+					if(vMove==0){isStanding=true;}
+					break;
+				case Keys.Right:
+					hMove=0;
+					if(vMove==0){isStanding=true;}
+					break;
+				case Keys.Up:
+					vMove=0;
+					if(hMove==0){isStanding=true;}
+					break;
+				case Keys.Down:
+					vMove=0;
+					if(hMove==0){isStanding=true;}
+					break;
+			}
+			if(isStanding==true){framesBeforeUpdate = 2;}
 		}
 		private void drawMap(Graphics g)
 		{
@@ -187,20 +203,31 @@ namespace MMBNO
 		void FrameTimerTick(object sender, System.EventArgs e)
 		{
 			if(framesBeforeUpdate>0) {
-				switch(naviDir) {
-				case 0:
-					naviY++;
-					break;
-				case 2:
-					if(naviWidth==widthToPass) //test if left or right
-						naviX++;
-					else
-						naviX--;
-					break;
-				case 4:
+				if (hMove==1)
+				{
+				  	naviX--;
+					naviDir=2;
+					widthToPass = -naviWidth; //makes the navi looks to the left
+					naviFrame++;
+				}
+				else if(hMove==2)
+				{
+					naviX++;
+					naviDir=2;
+					naviFrame++;
+					widthToPass = naviWidth;
+				}
+				if(vMove==1)
+				{
 					naviY--;
-					break;
-			}
+					naviDir=4;
+					naviFrame++;
+				}
+				else if(vMove==2)
+				{	naviY++;
+					naviDir=0;
+					naviFrame++;
+				}
 				framesBeforeUpdate--;
 			}
 			else

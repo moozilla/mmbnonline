@@ -64,7 +64,7 @@ namespace MMBNO
 			// frameTimer
 			// 
 			this.frameTimer.Enabled = true;
-			this.frameTimer.Interval = 20;
+			this.frameTimer.Interval = 41;
 			this.frameTimer.Tick += new System.EventHandler(this.FrameTimerTick);
 			// 
 			// MainForm
