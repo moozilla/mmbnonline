@@ -83,13 +83,14 @@ namespace MMBNO
 			mapOffsetX = 0; //initial values of the global vars
 			mapOffsetY = 0;
 			
-			naviX = 10;
-			naviY = 100;
-			naviDir = 0;
-			naviFrame = 0;
 			naviWidth = 27; //the skin file would say this
-			widthToPass = naviWidth;
 			naviHeight = 40;
+			//this two next lines center the navi on the screen
+			naviX = (this.Width - naviWidth) / 2;
+			naviY = (this.Height - naviHeight) / 2;
+			naviDir = 0; //direction the navi is facing
+			naviFrame = 0; //frame of the navi sheet that will be displayed
+			widthToPass = naviWidth; //used to flip the frame horizontally
 			naviNumFrames = 6; //doesn't count standing still
 			
 			framesBeforeUpdate=6; //how many frames each walking step takes
@@ -157,23 +158,35 @@ namespace MMBNO
 		{
 			switch(e.KeyCode) {
 				case Keys.Left:
-					hMove=0;
-					if(vMove==0){isStanding=true;}
+					if(hMove==1)
+					{
+						hMove=0;
+						if(vMove==0){isStanding=true;}
+					}
 					break;
 				case Keys.Right:
-					hMove=0;
-					if(vMove==0){isStanding=true;}
+					if(hMove==2)
+					{
+						hMove=0;
+						if(vMove==0){isStanding=true;}
+					}
 					break;
 				case Keys.Up:
-					vMove=0;
-					if(hMove==0){isStanding=true;}
+					if(vMove==1)
+					{
+						vMove=0;
+						if(hMove==0){isStanding=true;}
+					}
 					break;
 				case Keys.Down:
-					vMove=0;
-					if(hMove==0){isStanding=true;}
+					if(vMove==2)
+					{
+						vMove=0;
+						if(hMove==0){isStanding=true;}
+					}
 					break;
 			}
-			if(isStanding==true){framesBeforeUpdate = 2;}
+			if(isStanding==true){framesBeforeUpdate = 0;}
 		}
 		private void drawMap(Graphics g)
 		{
@@ -213,15 +226,21 @@ namespace MMBNO
 				if(vMove==1)
 				{
 					naviDir=4;
-					naviY--;
+					naviY-=2;
 				}
 				else if(vMove==2)
 				{	
 					naviDir=0;
+					naviY+=2;
+				}
+				if(hMove!=0&&vMove==2) {
+					naviDir=1;
+					naviY--;
+				}
+				if(hMove!=0&&vMove==1) {
+					naviDir=3;
 					naviY++;
 				}
-				if(hMove>0&&vMove==2) {naviDir=1;}
-				if(hMove>0&&vMove==1) {naviDir=3;}
 				framesBeforeUpdate--;
 			}
 			else
