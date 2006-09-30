@@ -207,39 +207,38 @@ namespace MMBNO
 			{rect = new Rectangle(naviX,naviY,widthToPass,naviHeight);}
 			g.DrawImage(naviImg,rect,naviFrame*naviWidth,naviDir*naviHeight,naviWidth,naviHeight,GraphicsUnit.Pixel);
 		}
-		
 		void FrameTimerTick(object sender, System.EventArgs e)
 		{
 			if(framesBeforeUpdate>0) {
 				if (hMove==1)
 				{
 					naviDir=2;
-				  	naviX-=2;
+				  	mapOffsetX-=2; //moves the map, not the navi, this creates the illusion of movement
 					widthToPass = -naviWidth; //makes the navi looks to the left
 				}
 				else if(hMove==2)
 				{
 					naviDir=2;
-					naviX+=2;
+					mapOffsetX+=2;
 					widthToPass = naviWidth;
 				}
 				if(vMove==1)
 				{
 					naviDir=4;
-					naviY-=2;
+					mapOffsetY-=2;
 				}
 				else if(vMove==2)
 				{	
 					naviDir=0;
-					naviY+=2;
+					mapOffsetY+=2;
 				}
 				if(hMove!=0&&vMove==2) {
 					naviDir=1;
-					naviY--;
+					mapOffsetY--;
 				}
 				if(hMove!=0&&vMove==1) {
 					naviDir=3;
-					naviY++;
+					mapOffsetY++;
 				}
 				framesBeforeUpdate--;
 			}
