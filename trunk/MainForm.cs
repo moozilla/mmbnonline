@@ -2,21 +2,16 @@
  * Created with SharpDevelop by Spikeman
  * 
  * Todo:
- * - Better animation (releastic frames)
- * - Diagonally movement
- * - Fix flicker
  * - Fix skin, make sure animations are same as in game
+ * - Add background
+ * - Collision
+ * - Animate map/background
  * 
  * Newset Updates (September 28, 2006):
  * - Fixed framesBeforeUpdate error in merge
  * - Changed interval on timer to be a bit more accurate (it was too slow before..)
  * - Added drawing buffer.. fixed flicker! It looks SO much better now!
  * 
- * Things to be fixed/done:
- * - You move too fast going diagonally and too slow going up or down.. fix this
- * - Fix it so you can switch opposite directions without stopping (left to right, up to down)
- * - Add background
- * - Make map scroll with navi
  */
 
 /*
@@ -86,8 +81,9 @@ namespace MMBNO
 			naviWidth = 27; //the skin file would say this
 			naviHeight = 40;
 			//this two next lines center the navi on the screen
-			naviX = (this.Width - naviWidth) / 2;
-			naviY = (this.Height - naviHeight) / 2;
+			//changed how it was centered so it matched with the gba version exactly
+			naviX = 134 - naviWidth;
+			naviY = 86 - naviHeight;
 			naviDir = 0; //direction the navi is facing
 			naviFrame = 0; //frame of the navi sheet that will be displayed
 			widthToPass = naviWidth; //used to flip the frame horizontally
