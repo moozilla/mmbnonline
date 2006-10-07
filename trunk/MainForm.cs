@@ -50,18 +50,20 @@ namespace MMBNO
 		private int mapOffsetX; // have to declare global variables here so they can be
 		private int mapOffsetY; // be used anywhere in the code later
 		
+		// These will be stored in navi class
 		private int naviX;
 		private int naviY;
 		private int naviDir;
 		private int naviFrame;
-		private int widthToPass; //This will be passed to the DrawImage function instead of the naviWith to allow the flip
 		
 		private int naviWidth;
 		private int naviHeight;
 		private int naviNumFrames;
+		// end class
 		
 		private int framesBeforeUpdate; //how many frames waits until passing to the next animation image
 		
+		private int widthToPass; //This will be passed to the DrawImage function instead of the naviWith to allow the flip
 		private bool isStanding;
 		private int hMove; //tells direction it mores horizontally 0=no movement 1=left 2=right
 		private int vMove; //tells direction it mores horizontally 0=no movement 1=up 2=down
