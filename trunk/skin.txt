@@ -1,5 +1,5 @@
 //Skin stuff
-Filename=C:\Documents and Settings\Administrator\My Documents\CSharp\mmbno\images\mmw.png
+Filename=navi.png
 Height=40
 Width=27
 //Navi stuff
