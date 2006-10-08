@@ -7,7 +7,10 @@
  * - Collision
  * - Animate map/background
  * 
- * Newset Updates (September 28, 2006):
+ * Newest Updates (October 6, 2006):
+ * - Added navi class, made code work with it
+ * 
+ * Older Updates (September 28, 2006):
  * - Fixed framesBeforeUpdate error in merge
  * - Changed interval on timer to be a bit more accurate (it was too slow before..)
  * - Added drawing buffer.. fixed flicker! It looks SO much better now!
@@ -47,21 +50,12 @@ namespace MMBNO
 			Application.Run(new MainForm());
 		}
 		
-		private int mapOffsetX; // have to declare global variables here so they can be
-		private int mapOffsetY; // be used anywhere in the code later
-		
-		// These will be stored in navi class
-		private int naviX;
-		private int naviY;
-		private int naviDir;
-		private int naviFrame;
-		
-		private int naviWidth;
-		private int naviHeight;
-		private int naviNumFrames;
-		// end class
+		private MMBNO.navi userNavi; //the users navi
 		
 		private int framesBeforeUpdate; //how many frames waits until passing to the next animation image
+		
+		private int mapOffsetX; // have to declare global variables here so they can
+		private int mapOffsetY; // be used anywhere in the code later
 		
 		private int widthToPass; //This will be passed to the DrawImage function instead of the naviWith to allow the flip
 		private bool isStanding;
@@ -80,16 +74,21 @@ namespace MMBNO
 			mapOffsetX = 0; //initial values of the global vars
 			mapOffsetY = 0;
 			
+			userNavi = new navi(27,40,6,pnlNavi.BackgroundImage); //initialize navi
+			
+			/* == this info is now in the navi class ==
 			naviWidth = 27; //the skin file would say this
 			naviHeight = 40;
+			naviNumFrames = 6; //doesn't count standing still
+			*/
+			
 			//this two next lines center the navi on the screen
 			//changed how it was centered so it matched with the gba version exactly
-			naviX = 134 - naviWidth;
-			naviY = 86 - naviHeight;
-			naviDir = 0; //direction the navi is facing
-			naviFrame = 0; //frame of the navi sheet that will be displayed
-			widthToPass = naviWidth; //used to flip the frame horizontally
-			naviNumFrames = 6; //doesn't count standing still
+			userNavi.x = 134 - userNavi.width;
+			userNavi.y = 86 - userNavi.height;
+			userNavi.dir = 0; //direction the navi is facing
+			userNavi.frame = 0; //frame of the navi sheet that will be displayed
+			widthToPass = userNavi.width; //used to flip the frame horizontally
 			
 			framesBeforeUpdate=6; //how many frames each walking step takes
 			
@@ -107,8 +106,7 @@ namespace MMBNO
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			// draws map and navi whenever a window is refreshed
-			Graphics g = pe.Graphics;
-			//g.Clear(Color.Black);
+			gBuffer.Graphics.Clear(Color.Black);
 			drawMap(gBuffer.Graphics);
 			drawNavi(gBuffer.Graphics);
 			gBuffer.Render(pe.Graphics); //draw buffer to window
@@ -195,47 +193,47 @@ namespace MMBNO
 		private void drawNavi(Graphics g)
 		{
 			Rectangle rect;
-			Image naviImg = pnlNavi.BackgroundImage;
 			//Rectangle rect = new Rectangle(0,0,naviWidth-1,naviHeight-1);
 			//g.DrawImage(naviImg,naviX,naviY,rect,GraphicsUnit.Pixel);
 			if (widthToPass<0)
-			{rect = new Rectangle(naviX + naviWidth,naviY,widthToPass,naviHeight);} //When the width is negative, the image is flipped horizontally
-																								//the naviWidth is added to the horizontal position so it flips in it's place (otherwise it would flip on the border of the old rectangle)
+			{rect = new Rectangle(userNavi.x + userNavi.width,userNavi.y,widthToPass,userNavi.height);}
+			//When the width is negative, the image is flipped horizontally the naviWidth is added to the
+			//horizontal position so it flips in it's place (otherwise it would flip on the border of the old rectangle)
 			else
-			{rect = new Rectangle(naviX,naviY,widthToPass,naviHeight);}
-			g.DrawImage(naviImg,rect,naviFrame*naviWidth,naviDir*naviHeight,naviWidth,naviHeight,GraphicsUnit.Pixel);
+			{rect = new Rectangle(userNavi.x,userNavi.y,widthToPass,userNavi.height);}
+			g.DrawImage(userNavi.image,rect,userNavi.frame*userNavi.width,userNavi.dir*userNavi.height,userNavi.width,userNavi.height,GraphicsUnit.Pixel);
 		}
 		void FrameTimerTick(object sender, System.EventArgs e)
 		{
 			if(framesBeforeUpdate>0) {
 				if (hMove==1)
 				{
-					naviDir=2;
+					userNavi.dir=2;
 				  	mapOffsetX-=2; //moves the map, not the navi, this creates the illusion of movement
-					widthToPass = -naviWidth; //makes the navi looks to the left
+					widthToPass = -userNavi.width; //makes the navi looks to the left
 				}
 				else if(hMove==2)
 				{
-					naviDir=2;
+					userNavi.dir=2;
 					mapOffsetX+=2;
-					widthToPass = naviWidth;
+					widthToPass = userNavi.width;
 				}
 				if(vMove==1)
 				{
-					naviDir=4;
+					userNavi.dir=4;
 					mapOffsetY-=2;
 				}
 				else if(vMove==2)
 				{	
-					naviDir=0;
+					userNavi.dir=0;
 					mapOffsetY+=2;
 				}
 				if(hMove!=0&&vMove==2) {
-					naviDir=1;
+					userNavi.dir=1;
 					mapOffsetY--;
 				}
 				if(hMove!=0&&vMove==1) {
-					naviDir=3;
+					userNavi.dir=3;
 					mapOffsetY++;
 				}
 				framesBeforeUpdate--;
@@ -244,12 +242,12 @@ namespace MMBNO
 			{
 				if(!isStanding)	//don't animate if standing still
 				{
-					naviFrame++;
-					if (naviFrame>naviNumFrames)
-						naviFrame = 1;
+					userNavi.frame++;
+					if (userNavi.frame>userNavi.numFrames)
+						userNavi.frame = 1;
 						framesBeforeUpdate=6;
 				} else {
-					naviFrame=0;
+					userNavi.frame=0;
 				}
 			}
 			Graphics g = this.CreateGraphics();
