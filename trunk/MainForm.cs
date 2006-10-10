@@ -7,7 +7,13 @@
  * - Collision
  * - Animate map/background
  * 
- * Newest Updates (October 6, 2006):
+ * Newest Updates (October 9, 2006)
+ * - Replaced widthToPass with hFlip in navi class
+ * - Moved drawNavi to navi.draw (now it will be able to draw multiple navis)
+ * - Started working on parsing skins (probably will have a mmbno.ini file which stores directory for skin file)
+ *   - right now skin.txt must be in same directory as the app
+ * 
+ * Older Updates (October 6, 2006):
  * - Added navi class, made code work with it
  * 
  * Older Updates (September 28, 2006):
@@ -34,6 +40,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using gma.System.Windows;
+using System.IO;
 
 namespace MMBNO
 {
@@ -57,20 +64,25 @@ namespace MMBNO
 		private int mapOffsetX; // have to declare global variables here so they can
 		private int mapOffsetY; // be used anywhere in the code later
 		
-		private int widthToPass; //This will be passed to the DrawImage function instead of the naviWith to allow the flip
 		private bool isStanding;
 		private int hMove; //tells direction it mores horizontally 0=no movement 1=left 2=right
 		private int vMove; //tells direction it mores horizontally 0=no movement 1=up 2=down
 
 		private BufferedGraphics gBuffer; //creates a buffer for graphics to be drawn to
 										  //it is then drawn to the screen all at once, this stops flickering
-		UserActivityHook keyHook; // this creates a structure that it's only job is to catch the key that are pressed
+		private UserActivityHook keyHook; // this creates a structure that it's only job is to catch the key that are pressed
+		
+		private string skinFile = "skin.txt";
+		
 		public MainForm()
 		{
 			//
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
+			
+			//parseSkin(skinFile);
+			
 			mapOffsetX = 0; //initial values of the global vars
 			mapOffsetY = 0;
 			
@@ -88,7 +100,6 @@ namespace MMBNO
 			userNavi.y = 86 - userNavi.height;
 			userNavi.dir = 0; //direction the navi is facing
 			userNavi.frame = 0; //frame of the navi sheet that will be displayed
-			widthToPass = userNavi.width; //used to flip the frame horizontally
 			
 			framesBeforeUpdate=6; //how many frames each walking step takes
 			
@@ -105,10 +116,11 @@ namespace MMBNO
 		
 		protected override void OnPaint(PaintEventArgs pe)
 		{
-			// draws map and navi whenever a window is refreshed
-			gBuffer.Graphics.Clear(Color.Black);
-			drawMap(gBuffer.Graphics);
-			drawNavi(gBuffer.Graphics);
+			// draws whenever the window is refreshed
+			gBuffer.Graphics.Clear(Color.Black); //black as blackground for now
+			drawMap(gBuffer.Graphics); //draw the map
+			userNavi.draw(gBuffer.Graphics); //draw the user's navi
+			//draw other navis
 			gBuffer.Render(pe.Graphics); //draw buffer to window
 		}
 		
@@ -190,33 +202,21 @@ namespace MMBNO
 			Rectangle rect = new Rectangle(0,0,240,160);
 			g.DrawImage(mapImg,rect,mapOffsetX,mapOffsetY,240,160,GraphicsUnit.Pixel);
 		}
-		private void drawNavi(Graphics g)
-		{
-			Rectangle rect;
-			//Rectangle rect = new Rectangle(0,0,naviWidth-1,naviHeight-1);
-			//g.DrawImage(naviImg,naviX,naviY,rect,GraphicsUnit.Pixel);
-			if (widthToPass<0)
-			{rect = new Rectangle(userNavi.x + userNavi.width,userNavi.y,widthToPass,userNavi.height);}
-			//When the width is negative, the image is flipped horizontally the naviWidth is added to the
-			//horizontal position so it flips in it's place (otherwise it would flip on the border of the old rectangle)
-			else
-			{rect = new Rectangle(userNavi.x,userNavi.y,widthToPass,userNavi.height);}
-			g.DrawImage(userNavi.image,rect,userNavi.frame*userNavi.width,userNavi.dir*userNavi.height,userNavi.width,userNavi.height,GraphicsUnit.Pixel);
-		}
-		void FrameTimerTick(object sender, System.EventArgs e)
+
+		private void FrameTimerTick(object sender, System.EventArgs e)
 		{
 			if(framesBeforeUpdate>0) {
 				if (hMove==1)
 				{
 					userNavi.dir=2;
 				  	mapOffsetX-=2; //moves the map, not the navi, this creates the illusion of movement
-					widthToPass = -userNavi.width; //makes the navi looks to the left
+					userNavi.hFlip = true; //makes the navi looks to the left
 				}
 				else if(hMove==2)
 				{
 					userNavi.dir=2;
 					mapOffsetX+=2;
-					widthToPass = userNavi.width;
+					userNavi.hFlip = false;
 				}
 				if(vMove==1)
 				{
@@ -254,5 +254,16 @@ namespace MMBNO
 			this.OnPaint(new PaintEventArgs(g,this.ClientRectangle));
 			g.Dispose();
 		}
+		
+		private void parseSkin(string filename)
+		{
+			StreamReader sr = new StreamReader(Application.StartupPath + "\\" + filename);
+			string line;
+			while ((line = sr.ReadLine()) != null) {
+				if(!line.StartsWith("//"))
+				   System.Diagnostics.Trace.WriteLine(line);
+			}
+		}
+		
 	}
 }

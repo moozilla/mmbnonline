@@ -6,6 +6,7 @@
  */
 
 using System;
+using System.Drawing;
 
 namespace MMBNO
 {
@@ -19,12 +20,13 @@ namespace MMBNO
 		private int naviY;
 		private int naviDir;
 		private int naviFrame;
+		private bool naviHFlip = false; //default to false
 		
 		private int naviWidth;
 		private int naviHeight;
 		private int naviNumFrames;
 		
-		private System.Drawing.Image naviImage;
+		private Image naviImage;
 		
 		public navi(int naviWidth, int naviHeight, int naviNumFrames, System.Drawing.Image naviImage) //constructor
 		{
@@ -58,6 +60,12 @@ namespace MMBNO
 			set { naviFrame = value; }
 		}
 		
+		public bool hFlip
+		{
+			get { return naviHFlip; }
+			set { naviHFlip = value; }
+		}
+		
 		public int width
 		{
 			get { return naviWidth; }
@@ -76,10 +84,22 @@ namespace MMBNO
 			set { naviNumFrames = value; }
 		}
 		
-		public System.Drawing.Image image
+		public Image image
 		{
 			get { return naviImage; }
 			set { naviImage = value; }
+		}
+		
+		public void draw(Graphics g)
+		{
+			Rectangle rect;
+			if (hFlip)
+			{rect = new Rectangle(x + width,y,-width,height);}
+			//When the width is negative, the image is flipped horizontally the naviWidth is added to the
+			//horizontal position so it flips in it's place (otherwise it would flip on the border of the old rectangle)
+			else
+			{rect = new Rectangle(x,y,width,height);}
+			g.DrawImage(image,rect,frame*width,dir*height,width,height,GraphicsUnit.Pixel);
 		}
 	}
 }
