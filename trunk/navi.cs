@@ -4,9 +4,16 @@
  * Created: 10/6/2006 at 9:04 PM by Spikeman
  * 
  */
-
+/*
+ * Edited: 10/10/2006 at 2:15 AM by by Nare
+ * 
+ * Changed the contructor to parse the skin file automatically por the navi data
+ * 
+ */
+ 
 using System;
 using System.Drawing;
+using System.IO;
 
 namespace MMBNO
 {
@@ -28,12 +35,20 @@ namespace MMBNO
 		
 		private Image naviImage;
 		
-		public navi(int naviWidth, int naviHeight, int naviNumFrames, System.Drawing.Image naviImage) //constructor
+		public navi(string filename, string appPath) //constructor
 		{
-			this.naviWidth = naviWidth;
-			this.naviHeight = naviHeight;
-			this.naviNumFrames = naviNumFrames;
-			this.naviImage = naviImage;
+			StreamReader sr = new StreamReader(appPath + "\\" + filename);
+			string line;
+			line = sr.ReadLine();
+			line = sr.ReadLine();
+			line = line.Substring(9);
+			naviImage = Image.FromFile(appPath + "\\" + line);
+			line = sr.ReadLine();
+			naviHeight=int.Parse(line.Substring(7));
+			line = sr.ReadLine();
+			naviWidth=int.Parse(line.Substring(6));
+			line = sr.ReadLine();
+			naviNumFrames=int.Parse(line.Substring(7));
 		}
 		
 		public int x
@@ -101,5 +116,6 @@ namespace MMBNO
 			{rect = new Rectangle(x,y,width,height);}
 			g.DrawImage(image,rect,frame*width,dir*height,width,height,GraphicsUnit.Pixel);
 		}
+
 	}
 }

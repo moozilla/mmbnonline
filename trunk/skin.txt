@@ -2,6 +2,7 @@
 Filename=navi.png
 Height=40
 Width=27
+Frames=6
 //Navi stuff
 Name=Megaman
 Operator=Lan

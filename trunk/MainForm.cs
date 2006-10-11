@@ -86,7 +86,7 @@ namespace MMBNO
 			mapOffsetX = 0; //initial values of the global vars
 			mapOffsetY = 0;
 			
-			userNavi = new navi(27,40,6,pnlNavi.BackgroundImage); //initialize navi
+			userNavi = new navi(skinFile, Application.StartupPath); //initialize navi
 			
 			/* == this info is now in the navi class ==
 			naviWidth = 27; //the skin file would say this
@@ -255,7 +255,8 @@ namespace MMBNO
 			g.Dispose();
 		}
 		
-		private void parseSkin(string filename)
+		//the next process was moved to the navi class
+		/*private void parseSkin(string filename)
 		{
 			StreamReader sr = new StreamReader(Application.StartupPath + "\\" + filename);
 			string line;
@@ -263,7 +264,7 @@ namespace MMBNO
 				if(!line.StartsWith("//"))
 				   System.Diagnostics.Trace.WriteLine(line);
 			}
-		}
+		}*/
 		
 	}
 }
