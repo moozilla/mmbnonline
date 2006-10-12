@@ -1,7 +1,7 @@
 //Skin stuff
 Filename=navi.png
-Height=40
 Width=27
+Height=40
 Frames=6
 //Navi stuff
 Name=Megaman

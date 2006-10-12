@@ -1,0 +1,11 @@
+//Skin stuff
+filename=mm_6.png
+height=32
+width=25
+frames=6
+//Navi stuff
+name=Megaman
+operator=Lan
+//Credit
+spriter=Capcom
+skinCreator=Spikeman

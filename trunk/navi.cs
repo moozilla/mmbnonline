@@ -14,6 +14,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Collections.Generic;
 
 namespace MMBNO
 {
@@ -35,20 +36,29 @@ namespace MMBNO
 		
 		private Image naviImage;
 		
-		public navi(string filename, string appPath) //constructor
+		public navi(string path, string filename) //constructor
 		{
-			StreamReader sr = new StreamReader(appPath + "\\" + filename);
+			//parses file into a dictionary so anything later added to skins can be added very easily
+			
+			StreamReader sr = new StreamReader(path + "\\" + filename);
 			string line;
-			line = sr.ReadLine();
-			line = sr.ReadLine();
-			line = line.Substring(9);
-			naviImage = Image.FromFile(appPath + "\\" + line);
-			line = sr.ReadLine();
-			naviHeight=int.Parse(line.Substring(7));
-			line = sr.ReadLine();
-			naviWidth=int.Parse(line.Substring(6));
-			line = sr.ReadLine();
-			naviNumFrames=int.Parse(line.Substring(7));
+			Dictionary<string, string> vals = new Dictionary<string, string>(); //store data from file in dictionary
+				
+			while ((line = sr.ReadLine()) != null) {
+				if(!line.StartsWith("//")) //only gets lines that aren't comments
+				{
+					int t = line.IndexOf("=");
+					string key = line.Substring(0,t).ToLower(); //key name is on left of equal sign
+					string val = line.Substring(t+1); //value name on right of equal sign
+					vals.Add(key,val);
+				}
+			}
+			sr.Close();
+			
+			naviWidth = Convert.ToInt32(vals["width"]);
+			naviHeight = Convert.ToInt32(vals["height"]);
+			naviNumFrames = Convert.ToInt32(vals["frames"]);
+			naviImage = Image.FromFile(path + "\\" + vals["filename"]);
 		}
 		
 		public int x

@@ -7,7 +7,12 @@
  * - Collision
  * - Animate map/background
  * 
- * Newest Updates (October 9, 2006)
+ * Newest (10/11/06)
+ * - Made perfect skin for BN6 Megaman. Works perfectly.
+ * - Rewrote skin parser for future work
+ * - Coming next: map stuff!
+ * 
+ * Older Updates (October 9, 2006)
  * - Replaced widthToPass with hFlip in navi class
  * - Moved drawNavi to navi.draw (now it will be able to draw multiple navis)
  * - Started working on parsing skins (probably will have a mmbno.ini file which stores directory for skin file)
@@ -72,7 +77,8 @@ namespace MMBNO
 										  //it is then drawn to the screen all at once, this stops flickering
 		private UserActivityHook keyHook; // this creates a structure that it's only job is to catch the key that are pressed
 		
-		private string skinFile = "skin.txt";
+		private string appPath = Application.StartupPath;
+		private string skinFile = "skin2.txt";
 		
 		public MainForm()
 		{
@@ -86,7 +92,7 @@ namespace MMBNO
 			mapOffsetX = 0; //initial values of the global vars
 			mapOffsetY = 0;
 			
-			userNavi = new navi(skinFile, Application.StartupPath); //initialize navi
+			userNavi = new navi(appPath, skinFile); //initialize navi
 			
 			/* == this info is now in the navi class ==
 			naviWidth = 27; //the skin file would say this
@@ -96,8 +102,8 @@ namespace MMBNO
 			
 			//this two next lines center the navi on the screen
 			//changed how it was centered so it matched with the gba version exactly
-			userNavi.x = 134 - userNavi.width;
-			userNavi.y = 86 - userNavi.height;
+			userNavi.x = 133 - userNavi.width;
+			userNavi.y = 87 - userNavi.height;
 			userNavi.dir = 0; //direction the navi is facing
 			userNavi.frame = 0; //frame of the navi sheet that will be displayed
 			
