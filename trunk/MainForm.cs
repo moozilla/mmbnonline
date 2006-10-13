@@ -2,26 +2,30 @@
  * Created with SharpDevelop by Spikeman
  * 
  * Todo:
- * - Fix skin, make sure animations are same as in game
- * - Add background
- * - Collision
  * - Animate map/background
- * 
- * Newest (10/11/06)
+ * - Collision
+ * - Multiple layers on maps
+ * - Objects on map
+ * - Mulitple levels on maps
+ * - Online functionality
+ * - Battle stuff
+ *
+ # [10/12/06]
+ * - Changed map.. now is BN6 and better for testing
+ * - Added running - hold down "D"
+ *   - Should later add functionality for user to set keys
+ # [10/11/06]
  * - Made perfect skin for BN6 Megaman. Works perfectly.
  * - Rewrote skin parser for future work
  * - Coming next: map stuff!
- * 
- * Older Updates (October 9, 2006)
+ # [October 9, 2006]
  * - Replaced widthToPass with hFlip in navi class
  * - Moved drawNavi to navi.draw (now it will be able to draw multiple navis)
  * - Started working on parsing skins (probably will have a mmbno.ini file which stores directory for skin file)
  *   - right now skin.txt must be in same directory as the app
- * 
- * Older Updates (October 6, 2006):
+ # [October 6, 2006]:
  * - Added navi class, made code work with it
- * 
- * Older Updates (September 28, 2006):
+ # [September 28, 2006]:
  * - Fixed framesBeforeUpdate error in merge
  * - Changed interval on timer to be a bit more accurate (it was too slow before..)
  * - Added drawing buffer.. fixed flicker! It looks SO much better now!
@@ -69,6 +73,7 @@ namespace MMBNO
 		private int mapOffsetX; // have to declare global variables here so they can
 		private int mapOffsetY; // be used anywhere in the code later
 		
+		private bool isRunning;
 		private bool isStanding;
 		private int hMove; //tells direction it mores horizontally 0=no movement 1=left 2=right
 		private int vMove; //tells direction it mores horizontally 0=no movement 1=up 2=down
@@ -89,8 +94,8 @@ namespace MMBNO
 			
 			//parseSkin(skinFile);
 			
-			mapOffsetX = 0; //initial values of the global vars
-			mapOffsetY = 0;
+			mapOffsetX = -25; //initial values of the global vars
+			mapOffsetY = 375;
 			
 			userNavi = new navi(appPath, skinFile); //initialize navi
 			
@@ -135,19 +140,13 @@ namespace MMBNO
 		{
 			switch(e.KeyCode) {
 				//debug keys
-				case Keys.NumPad4:
-					mapOffsetX-=10;
-					break;
-				case Keys.NumPad6:
-					mapOffsetX+=10;
-					break;
-				case Keys.NumPad8:
-					mapOffsetY-=10;
-					break;
-				case Keys.NumPad2:
-					mapOffsetY+=10;
-					break;
+				case Keys.Back:		//backspace
+				System.Diagnostics.Trace.WriteLine("x,y:"+mapOffsetX+","+mapOffsetY);
+				break;
 				//end debug
+				case Keys.D:
+					isRunning = true;
+					break;
 				case Keys.Left:
 					hMove=1;
 					isStanding=false;
@@ -199,8 +198,11 @@ namespace MMBNO
 						if(hMove==0){isStanding=true;}
 					}
 					break;
+				case Keys.D:
+					isRunning = false;
+					break;
 			}
-			if(isStanding==true){framesBeforeUpdate = 0;}
+			if(isStanding==true) {framesBeforeUpdate = 0;}
 		}
 		private void drawMap(Graphics g)
 		{
@@ -215,32 +217,32 @@ namespace MMBNO
 				if (hMove==1)
 				{
 					userNavi.dir=2;
-				  	mapOffsetX-=2; //moves the map, not the navi, this creates the illusion of movement
+					mapOffsetX-=isRunning ? 4 : 2; //moves the map, not the navi, this creates the illusion of movement
 					userNavi.hFlip = true; //makes the navi looks to the left
 				}
 				else if(hMove==2)
 				{
 					userNavi.dir=2;
-					mapOffsetX+=2;
+					mapOffsetX+=isRunning ? 4 : 2;
 					userNavi.hFlip = false;
 				}
 				if(vMove==1)
 				{
 					userNavi.dir=4;
-					mapOffsetY-=2;
+					mapOffsetY-=isRunning ? 4 : 2;
 				}
 				else if(vMove==2)
 				{	
 					userNavi.dir=0;
-					mapOffsetY+=2;
+					mapOffsetY+=isRunning ? 4 : 2;
 				}
 				if(hMove!=0&&vMove==2) {
 					userNavi.dir=1;
-					mapOffsetY--;
+					mapOffsetY-=isRunning ? 2 : 1;
 				}
 				if(hMove!=0&&vMove==1) {
 					userNavi.dir=3;
-					mapOffsetY++;
+					mapOffsetY+=isRunning ? 2 : 1;
 				}
 				framesBeforeUpdate--;
 			}

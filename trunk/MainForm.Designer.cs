@@ -39,7 +39,6 @@ namespace MMBNO
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.pnlMap = new System.Windows.Forms.Panel();
-			this.pnlNavi = new System.Windows.Forms.Panel();
 			this.frameTimer = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
 			// 
@@ -51,15 +50,6 @@ namespace MMBNO
 			this.pnlMap.Size = new System.Drawing.Size(38, 43);
 			this.pnlMap.TabIndex = 0;
 			this.pnlMap.Visible = false;
-			// 
-			// pnlNavi
-			// 
-			this.pnlNavi.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pnlNavi.BackgroundImage")));
-			this.pnlNavi.Location = new System.Drawing.Point(56, 12);
-			this.pnlNavi.Name = "pnlNavi";
-			this.pnlNavi.Size = new System.Drawing.Size(47, 43);
-			this.pnlNavi.TabIndex = 1;
-			this.pnlNavi.Visible = false;
 			// 
 			// frameTimer
 			// 
@@ -73,14 +63,12 @@ namespace MMBNO
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(240, 160);
-			this.Controls.Add(this.pnlNavi);
 			this.Controls.Add(this.pnlMap);
 			this.Name = "MainForm";
 			this.Text = "MMBNO";
 			this.ResumeLayout(false);
 		}
 		private System.Windows.Forms.Timer frameTimer;
-		private System.Windows.Forms.Panel pnlNavi;
 		private System.Windows.Forms.Panel pnlMap;
 }
 	}
