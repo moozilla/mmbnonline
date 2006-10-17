@@ -15,6 +15,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace MMBNO
 {
@@ -33,14 +34,33 @@ namespace MMBNO
 		private int naviWidth;
 		private int naviHeight;
 		private int naviNumFrames;
+		private int naviStandingFrames;
 		
 		private Image naviImage;
 		
 		public navi(string path, string filename) //constructor
 		{
+			if(!loadNavi(path + "\\" + filename))
+				throw new System.Exception("Invalid skin");
+		}
+		
+		public navi(string filename) //full filename
+		{
+			if(!loadNavi(filename))
+				throw new System.Exception("Invalid skin");
+		}
+		
+		private bool loadNavi(string filename)
+		{
 			//parses file into a dictionary so anything later added to skins can be added very easily
 			
-			StreamReader sr = new StreamReader(path + "\\" + filename);
+			StreamReader sr;
+			try {
+				sr = new StreamReader(filename);
+			} catch {
+				//MessageBox.Show("Skin not found.","Skin not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
 			string line;
 			Dictionary<string, string> vals = new Dictionary<string, string>(); //store data from file in dictionary
 				
@@ -55,10 +75,19 @@ namespace MMBNO
 			}
 			sr.Close();
 			
-			naviWidth = Convert.ToInt32(vals["width"]);
-			naviHeight = Convert.ToInt32(vals["height"]);
-			naviNumFrames = Convert.ToInt32(vals["frames"]);
-			naviImage = Image.FromFile(path + "\\" + vals["filename"]);
+			string path = filename.Substring(0,filename.LastIndexOf("\\"));
+			
+			try {
+				naviWidth = Convert.ToInt32(vals["width"]);
+				naviHeight = Convert.ToInt32(vals["height"]);
+				naviNumFrames = Convert.ToInt32(vals["frames"]);
+				naviImage = Image.FromFile(path + "\\" + vals["filename"]);
+			} catch {
+				MessageBox.Show("Required value not found in skin file.","Missing value", MessageBoxButtons.OK,MessageBoxIcon.Error);
+				return false;
+			}
+			naviStandingFrames = vals.ContainsKey("standingframes") ? Convert.ToInt32(vals["standingframes"]) : 1; //default 1
+			return true; //success
 		}
 		
 		public int x
@@ -107,6 +136,12 @@ namespace MMBNO
 		{
 			get { return naviNumFrames; }
 			set { naviNumFrames = value; }
+		}
+		
+		public int standingFrames
+		{
+			get { return naviStandingFrames; }
+			set { naviStandingFrames = value; }
 		}
 		
 		public Image image

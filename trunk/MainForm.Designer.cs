@@ -40,6 +40,7 @@ namespace MMBNO
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.pnlMap = new System.Windows.Forms.Panel();
 			this.frameTimer = new System.Windows.Forms.Timer(this.components);
+			this.loadSkinDialog = new System.Windows.Forms.OpenFileDialog();
 			this.SuspendLayout();
 			// 
 			// pnlMap
@@ -53,9 +54,12 @@ namespace MMBNO
 			// 
 			// frameTimer
 			// 
-			this.frameTimer.Enabled = true;
 			this.frameTimer.Interval = 17;
 			this.frameTimer.Tick += new System.EventHandler(this.FrameTimerTick);
+			// 
+			// loadSkinDialog
+			// 
+			this.loadSkinDialog.Filter = "Text Files|*.txt|All Files|*.*";
 			// 
 			// MainForm
 			// 
@@ -68,6 +72,7 @@ namespace MMBNO
 			this.Text = "MMBNO";
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.OpenFileDialog loadSkinDialog;
 		private System.Windows.Forms.Timer frameTimer;
 		private System.Windows.Forms.Panel pnlMap;
 }

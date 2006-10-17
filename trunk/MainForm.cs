@@ -2,6 +2,9 @@
  * Created with SharpDevelop by Spikeman
  * 
  * Todo:
+ * - Support tiled maps
+ *   - Make map editor/generator
+ *     - For generator, take image and tile image, for each 8x8 pixel square find in array of tiles.
  * - Animate map/background
  * - Collision
  * - Multiple layers on maps
@@ -10,6 +13,10 @@
  * - Online functionality
  * - Battle stuff
  *
+ # [10/16/06]
+ * - Error handling for skins
+ * - Support for animated standing sprites
+ * - Changed map (easier tiling)
  # [10/12/06]
  * - Changed map.. now is BN6 and better for testing
  * - Added running - hold down "D"
@@ -63,7 +70,11 @@ namespace MMBNO
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			try {
 			Application.Run(new MainForm());
+			} catch {
+				//skin file not found
+			}
 		}
 		
 		private MMBNO.navi userNavi; //the users navi
@@ -83,21 +94,23 @@ namespace MMBNO
 		private UserActivityHook keyHook; // this creates a structure that it's only job is to catch the key that are pressed
 		
 		private string appPath = Application.StartupPath;
-		private string skinFile = "skin2.txt";
+		private string skinFile = "skin.txt";
 		
 		public MainForm()
 		{
-			//
 			// The InitializeComponent() call is required for Windows Forms designer support.
-			//
 			InitializeComponent();
 			
-			//parseSkin(skinFile);
+			mapOffsetX = 225; //initial values of the global vars
+			mapOffsetY = 63;
 			
-			mapOffsetX = -25; //initial values of the global vars
-			mapOffsetY = 375;
-			
-			userNavi = new navi(appPath, skinFile); //initialize navi
+			try {
+				userNavi = new navi(appPath, skinFile); //initialize navi
+			} catch {
+				MessageBox.Show("Invalid or missing skin file.","Error loading navi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				this.Close();
+				return;
+			}
 			
 			/* == this info is now in the navi class ==
 			naviWidth = 27; //the skin file would say this
@@ -123,9 +136,12 @@ namespace MMBNO
 			BufferedGraphicsContext gContext = BufferedGraphicsManager.Current; //set up buffer
 			gContext.MaximumBuffer = new Size(240,160); //size of screen
 			gBuffer = gContext.Allocate(this.CreateGraphics(), new Rectangle(0,0,this.Width,this.Height)); //allocate buffer
+			
+			frameTimer.Enabled = true; //start timer
 		}
 		
-		protected override void OnPaint(PaintEventArgs pe)
+		//needed?
+		/*protected override void OnPaint(PaintEventArgs pe)
 		{
 			// draws whenever the window is refreshed
 			gBuffer.Graphics.Clear(Color.Black); //black as blackground for now
@@ -133,15 +149,18 @@ namespace MMBNO
 			userNavi.draw(gBuffer.Graphics); //draw the user's navi
 			//draw other navis
 			gBuffer.Render(pe.Graphics); //draw buffer to window
-		}
+		}*/	
 		
-		
-		public void MyKeyDown(object sender, KeyEventArgs e)
+		private void MyKeyDown(object sender, KeyEventArgs e)
 		{
+			bool wasStanding = isStanding;
 			switch(e.KeyCode) {
 				//debug keys
 				case Keys.Back:		//backspace
 				System.Diagnostics.Trace.WriteLine("x,y:"+mapOffsetX+","+mapOffsetY);
+				break;
+				case Keys.L:
+				loadSkin();
 				break;
 				//end debug
 				case Keys.D:
@@ -166,8 +185,11 @@ namespace MMBNO
 				default:
 					break;
 			}
+			if(!isStanding&&isStanding!=wasStanding) {
+				userNavi.frame = userNavi.standingFrames - 1; //skip over rest of standing frames
+			}
 		}
-		public void MyKeyUp(object sender, KeyEventArgs e)
+		private void MyKeyUp(object sender, KeyEventArgs e)
 		{
 			switch(e.KeyCode) {
 				case Keys.Left:
@@ -202,7 +224,7 @@ namespace MMBNO
 					isRunning = false;
 					break;
 			}
-			if(isStanding==true) {framesBeforeUpdate = 0;}
+			if(isStanding==true) {framesBeforeUpdate = 3;} //small delay before standing
 		}
 		private void drawMap(Graphics g)
 		{
@@ -252,27 +274,46 @@ namespace MMBNO
 				{
 					userNavi.frame++;
 					if (userNavi.frame>userNavi.numFrames)
-						userNavi.frame = 1;
+						userNavi.frame = userNavi.standingFrames;
 						framesBeforeUpdate=6;
 				} else {
-					userNavi.frame=0;
+					userNavi.frame++;
+					if (userNavi.frame>=userNavi.standingFrames)
+						userNavi.frame = 0;
+						framesBeforeUpdate=6;
 				}
 			}
 			Graphics g = this.CreateGraphics();
-			this.OnPaint(new PaintEventArgs(g,this.ClientRectangle));
+			// draws whenever the window is refreshed
+			gBuffer.Graphics.Clear(Color.Black); //black as blackground for now
+			drawMap(gBuffer.Graphics); //draw the map
+			userNavi.draw(gBuffer.Graphics); //draw the user's navi
+			//draw other navis
+			gBuffer.Render(g); //draw buffer to window
 			g.Dispose();
 		}
 		
-		//the next process was moved to the navi class
-		/*private void parseSkin(string filename)
+		private void loadSkin()
 		{
-			StreamReader sr = new StreamReader(Application.StartupPath + "\\" + filename);
-			string line;
-			while ((line = sr.ReadLine()) != null) {
-				if(!line.StartsWith("//"))
-				   System.Diagnostics.Trace.WriteLine(line);
+			if(loadSkinDialog.ShowDialog()==DialogResult.OK) {
+				try {
+					navi newNavi = userNavi;
+					try {
+						newNavi = new navi(loadSkinDialog.FileName); //initialize navi
+					} catch {
+						MessageBox.Show("Invalid or missing skin file.","Error loading navi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+					userNavi = newNavi;
+				} catch {
+					MessageBox.Show("Navi could not be loaded.","Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				
+				userNavi.x = 133 - userNavi.width;
+				userNavi.y = 87 - userNavi.height;
+				userNavi.dir = 0; //direction the navi is facing
+				userNavi.frame = 0; //frame of the navi sheet that will be displayed
 			}
-		}*/
+		}
 		
 	}
 }
