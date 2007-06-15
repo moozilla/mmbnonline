@@ -1,0 +1,25 @@
+# depslib dependency file v1.0
+1181876792 source:c:\documents and settings\fer\mis documentos\fer\codes\rep\main.cpp
+	<cstdlib>
+	<direct.h>
+	<SDL/SDL.h>
+	<SDL/SDL_image.h>
+	"navi.h"
+	"Timer.h"
+	"SDL_Func.h"
+
+1181871695 c:\documents and settings\fer\mis documentos\fer\codes\rep\navi.h
+	<SDL/SDL.h>
+	<SDL/SDL_image.h>
+	<string>
+	<fstream>
+	<map>
+	"SDL_Func.h"
+
+1181866465 c:\documents and settings\fer\mis documentos\fer\codes\rep\sdl_func.h
+	<SDL/SDL.h>
+	<SDL/SDL_image.h>
+
+1181858695 c:\documents and settings\fer\mis documentos\fer\codes\rep\timer.h
+	<SDL/SDL.h>
+
