@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1181876792 source:c:\documents and settings\fer\mis documentos\fer\codes\rep\main.cpp
+1181878590 source:c:\documents and settings\fer\mis documentos\fer\codes\rep\main.cpp
 	<cstdlib>
 	<direct.h>
 	<SDL/SDL.h>
