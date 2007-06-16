@@ -1,0 +1,16 @@
+//Skin stuff
+Filename=navi.png
+//width of EACH navi sprites
+Width=27
+//height of EACH navi sprites
+Height=40
+//ammount of sprites per line
+Frames=6
+//If the navi movement sprites are ONLY facing right then this should go in 1, if there are both left and right, it should go in 0
+hflip=1
+//Navi stuff
+Name=Megaman
+Operator=Lan
+//Credit
+Spriter=Capcom
+SkinCreator=Spikeman
