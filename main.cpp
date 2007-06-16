@@ -10,6 +10,10 @@
  *
  * Created: 3/18/2007 at 2:00 PM by Nare
  *
+ * Edited: 16/6/2007 at 1:16 AM by Nare
+ *
+ * -Fixed the walking glitch from walking diagonally
+ *
  */
 int main ( int argc, char** argv )
 {
@@ -107,7 +111,9 @@ int main ( int argc, char** argv )
       if(offsetx==0){
           switch(offsety){
             case 0: standing=true;break; //isn't moving
+            case 4: offsety=8; direction=0;break; //changed from going diagonally to going sright down
             case 8: direction=0;break; //is going down
+            case -4: offsety=-8; direction=4;break; //changed from going diagonally to going sright up
             case -8: direction=4;break; //is going up
           }
       }
@@ -127,6 +133,9 @@ int main ( int argc, char** argv )
             }
         }
       }
+      printf("voy %i \n",offsety);
+      printf("voy1 %i \n",offsetx);
+      printf("voy2 %i \n",direction);
 
   //      *screen = *map;
         // DRAWING STARTS HERE
