@@ -5,6 +5,7 @@
 #include "navi.h"
 #include "Timer.h"
 #include "SDL_Func.h"
+#include "background.h"
 /*
  * MMBNO Main
  *
@@ -14,6 +15,9 @@
  *
  * -Fixed the walking glitch from walking diagonally
  *
+ * Edited: 26/6/2007 at 11:20 PM by Nare
+ *
+ * -Changed the old map for the background object, after a little time the image becomes clumsy
  */
 int main ( int argc, char** argv )
 {
@@ -45,7 +49,7 @@ int main ( int argc, char** argv )
     // load a navi
 
     Navi a(programPath + "\\skin.txt");
-
+/*
     //this is the original map, we will always use it as a base for the screen
     SDL_Surface* map;
     SDL_Surface* optimizebuffer;
@@ -53,10 +57,13 @@ int main ( int argc, char** argv )
     map = SDL_DisplayFormat(optimizebuffer);
     SDL_FreeSurface(optimizebuffer);
 
-    bool done = false; //this says that it has to do
     SDL_Rect background;
     background.x=(screen->w - map->w)/2; //centers the background horizontally
     background.y=(screen->h - map->h)/2; //centers the background vertically
+    */
+    Background backy(programPath + "\\map.txt");
+
+    bool done = false; //this says that it has to do
     a.move((screen->w - a.naviWidth)/2,(screen->h - 2*a.naviHeight)/2,0,true, true); //puts our little guy STANDING on the center of the screen
     int offsetx=0; //nuff said
     int offsety=0; //nuff said
@@ -133,19 +140,16 @@ int main ( int argc, char** argv )
             }
         }
       }
-      printf("voy %i \n",offsety);
-      printf("voy1 %i \n",offsetx);
-      printf("voy2 %i \n",direction);
 
-  //      *screen = *map;
-        // DRAWING STARTS HERE
 
         // clear screen
-        SDL_BlitSurface(map, 0, screen, &background); //draw the map, that would CLEAR THE SCREEN
+//        SDL_BlitSurface(map, 0, screen, &background); //draw the map, that would CLEAR THE SCREEN
+        backy.draw(screen);
         a.move(offsetx,offsety,direction,true, standing); //we move the navi
         a.draw(screen); //we DRAW the navi on the screen
         // DRAWING ENDS HERE
 
+        SDL_Flip(screen);
 
         //Limit the framerate
             while( fps.get_ticks() < 1000 / 24 )
@@ -155,7 +159,6 @@ int main ( int argc, char** argv )
 
 
         // finally, update the screen :)
-        SDL_Flip(screen);
     } // end main loop
 
     // all is well ;)
