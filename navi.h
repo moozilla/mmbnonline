@@ -54,8 +54,8 @@ public:
   bool loadNavi(string filename);
   Navi(string filename); //full filename
   ~Navi(void);
-  int naviWidth;
-  int naviHeight;
+            int naviWidth;
+            int naviHeight;
   void draw(SDL_Surface* g); //This is the
   bool IsFlipped(void); //Returns if the navi uses the flipping process or is stored in spritesheet
   void FlipH(void); //Changes the naviHflip variable
@@ -86,6 +86,9 @@ Navi::Navi(string filename) //full filename
 
 Navi::~Navi(void)
 {
+    SDL_free(todraw);
+    SDL_free(naviImage);
+
 }
 
 bool Navi::loadNavi(string filename)
@@ -148,6 +151,7 @@ void Navi::draw(SDL_Surface* g)		{
 	rectframe.h=naviHeight;
 	//if the Hflip is on, then we must flip the navi before drawing
         //I initialize the cropped navi image
+    SDL_free(todraw);
 	todraw = SDL_CreateRGBSurface(naviImage->flags, rectscr.w, rectscr.h, naviImage->format->BitsPerPixel, naviImage->format->Rmask, naviImage->format->Gmask, naviImage->format->Bmask, 0);
 	SDL_SetColorKey(todraw, SDL_SRCCOLORKEY,naviImage->format->colorkey);
 

@@ -1,0 +1,10 @@
+Firstly, all the overworld is runned by the main procedure. The map, navi
+movement, etc. is all done by the main.
+
+Taking this into account I splitted the graphics part in 3: background, objects, and HUD.
+
+- The background will group both the back animation and the map image.
+
+- Objects is what is right now the navi class, anything that STANDS on the map is an object. I think that the best we can do is leave the navi class almost as it is and make it template class and add there the special things we need for each things.
+
+- The HUD is all the "screen stuff" like the talk windows, menues, PET image, metters, etc...

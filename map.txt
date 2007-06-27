@@ -1,0 +1,24 @@
+//Map set, it will be changed to pint the tiling file later
+Filename=map.png
+//width of map
+MapWidth=640
+//height of map
+MapHeight=336
+
+//Background file
+BackFile=ACDCbg.png
+//ammount of sprites per row
+SpritesPerRow=2
+//ammount of rows
+SpritesRows=4
+//width of sprites
+SpriteWidth=124
+//height of sprites
+SpriteHeight=148
+
+
+//Misc stuff
+Name=test map 1
+//Credit
+Spriter=Capcom
+MapCreator=Nare

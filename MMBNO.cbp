@@ -49,6 +49,7 @@
 		</Linker>
 		<Unit filename="SDL_func.h" />
 		<Unit filename="Timer.h" />
+		<Unit filename="background.h" />
 		<Unit filename="cb.bmp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="navi.h" />
