@@ -49,19 +49,8 @@ int main ( int argc, char** argv )
     // load a navi
 
     Navi a(programPath + "\\skin.txt");
-/*
-    //this is the original map, we will always use it as a base for the screen
-    SDL_Surface* map;
-    SDL_Surface* optimizebuffer;
-    optimizebuffer = IMG_Load("map.png");
-    map = SDL_DisplayFormat(optimizebuffer);
-    SDL_FreeSurface(optimizebuffer);
 
-    SDL_Rect background;
-    background.x=(screen->w - map->w)/2; //centers the background horizontally
-    background.y=(screen->h - map->h)/2; //centers the background vertically
-    */
-    Background backy(programPath + "\\map.txt");
+    Background backy(programPath + "\\map.txt", screen);
 
     bool done = false; //this says that it has to do
     a.move((screen->w - a.naviWidth)/2,(screen->h - 2*a.naviHeight)/2,0,true, true); //puts our little guy STANDING on the center of the screen
@@ -144,8 +133,9 @@ int main ( int argc, char** argv )
 
         // clear screen
 //        SDL_BlitSurface(map, 0, screen, &background); //draw the map, that would CLEAR THE SCREEN
+        backy.move(offsetx,offsety,true);
         backy.draw(screen);
-        a.move(offsetx,offsety,direction,true, standing); //we move the navi
+        a.move(0,0,direction,true, standing); //we move the navi
         a.draw(screen); //we DRAW the navi on the screen
         // DRAWING ENDS HERE
 
