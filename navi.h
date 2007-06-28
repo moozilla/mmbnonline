@@ -25,10 +25,14 @@
  *
  * finished migration to C++/SDL
  - ONLY THING LEFT TO DO IS THE H FLIPPING
-
+ *
  * Edited: 6/14/2007 at 10:00 PM by Nare
  *
  * Flipping Works!!
+ *
+ * Edited: 6/28/2007 at 10:00 PM by Nare
+ *
+ * Changed the condition in the if sentence of the move function fron > to ==
 
 	/// <summary>
 	/// The class for navis.
@@ -173,7 +177,7 @@ void Navi::move(int x, int y, int direction,bool nextframe, bool stand){
     naviDir=direction;
     if(nextframe){
         naviFrame++;
-        if(naviFrame>naviNumFrames){naviFrame=0;}
+        if(naviFrame==naviNumFrames){naviFrame=0;}
     }
     if(stand){naviFrame=0;}
 }

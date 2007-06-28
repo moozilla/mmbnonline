@@ -6,15 +6,15 @@ MapWidth=640
 MapHeight=336
 
 //Background file
-BackFile=backgroundsprites.png
+BackFile=ACDCbg.png
 //ammount of sprites per row
 SpritesPerRow=2
 //ammount of rows
 SpritesRows=4
 //width of sprites
-SpriteWidth=128
+SpriteWidth=124
 //height of sprites
-SpriteHeight=64
+SpriteHeight=148
 
 
 //Misc stuff

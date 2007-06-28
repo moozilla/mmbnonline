@@ -11,13 +11,17 @@
  *
  * Created: 3/18/2007 at 2:00 PM by Nare
  *
- * Edited: 16/6/2007 at 1:16 AM by Nare
+ * Edited: 6/16/2007 at 1:16 AM by Nare
  *
  * -Fixed the walking glitch from walking diagonally
  *
- * Edited: 26/6/2007 at 11:20 PM by Nare
+ * Edited: 6/26/2007 at 11:20 PM by Nare
  *
  * -Changed the old map for the background object, after a little time the image becomes clumsy
+ *
+ * Edited: 6/28/2007 at 07:46 PM by Nare
+ *
+ * -Added the backnextframe variable to make the background animation
  */
 int main ( int argc, char** argv )
 {
@@ -51,6 +55,7 @@ int main ( int argc, char** argv )
     Navi a(programPath + "\\skin.txt");
 
     Background backy(programPath + "\\map.txt", screen);
+    bool backnextframe=false; //sets if the background frame changes
 
     bool done = false; //this says that it has to do
     a.move((screen->w - a.naviWidth)/2,(screen->h - 2*a.naviHeight)/2,0,true, true); //puts our little guy STANDING on the center of the screen
@@ -62,6 +67,7 @@ int main ( int argc, char** argv )
    // map=flip_surface(map, FLIP_HORIZONTAL);
 
     // program main loop
+    backy.move((screen->w)/4, (screen->h)/4,false);
     while (!done)
     {
         fps.start(); //strat the counter for framerating
@@ -133,7 +139,8 @@ int main ( int argc, char** argv )
 
         // clear screen
 //        SDL_BlitSurface(map, 0, screen, &background); //draw the map, that would CLEAR THE SCREEN
-        backy.move(offsetx,offsety,true);
+        backy.move(offsetx,offsety,backnextframe);
+        backnextframe= !backnextframe;
         backy.draw(screen);
         a.move(0,0,direction,true, standing); //we move the navi
         a.draw(screen); //we DRAW the navi on the screen
