@@ -9,11 +9,16 @@
 /*
  * MMBNO background class
  *
- * Created: 23/6/2007 at 11:00 PM by Nare
+ * Created: 6/23/2007 at 11:00 PM by Nare
  *
- * Edited: 26/6/2007 at 11:20 PM by Nare
+ * Edited: 6/26/2007 at 11:20 PM by Nare
  *
  * - Started the draw function
+ *
+ * Edited: 6/28/2007 at 11:20 PM by Nare
+ *
+ * - modified the move function, it now thakes a bool to know if to move to the next frame
+ * - modified the draw function, it now creates the bacgkground correctly
  */
 
 using namespace std;
@@ -130,7 +135,7 @@ bool Background::loadBackground(string filename, SDL_Surface* screen)
         }
         offsetY=0;
         col++;
-        if(col>atoi(vals["spritesperrow"].c_str())){
+        if(col==atoi(vals["spritesperrow"].c_str())){
             col=0;
             row++;
         }
@@ -139,10 +144,13 @@ bool Background::loadBackground(string filename, SDL_Surface* screen)
 
     tempname = path + "\\" + vals["filename"].c_str();
     tempmap = IMG_Load(tempname.c_str()); //loads the map
+
+    //we are going to paste the whole map
     cutplace.x=0;
     cutplace.y=0;
-    cutplace.w=640;
-    cutplace.h=336;
+    cutplace.w=tempmap->w;
+    cutplace.h=tempmap->h;
+
     pasteplace.y=(screen->h)/2; //center horizontally
     pasteplace.w=atoi(vals["mapwidth"].c_str());
     pasteplace.h=atoi(vals["mapheight"].c_str());
@@ -186,7 +194,7 @@ void Background::move(int x, int y, bool nextframe){
     backY+=y;
     if(nextframe){
         backFrame++;
-        if(backFrame>backNumFrames){backFrame=0;}
+        if(backFrame==backNumFrames){backFrame=0;}
     }
 }
 
