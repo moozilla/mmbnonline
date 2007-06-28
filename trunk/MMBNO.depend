@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1182910482 source:c:\documents and settings\fer\mis documentos\fer\codes\rep\main.cpp
+1182999085 source:c:\documents and settings\fer\mis documentos\fer\codes\rep\main.cpp
 	<cstdlib>
 	<direct.h>
 	<SDL/SDL.h>
@@ -24,7 +24,7 @@
 1181858695 c:\documents and settings\fer\mis documentos\fer\codes\rep\timer.h
 	<SDL/SDL.h>
 
-1182910636 c:\documents and settings\fer\mis documentos\fer\codes\rep\background.h
+1183000362 c:\documents and settings\fer\mis documentos\fer\codes\rep\background.h
 	<SDL/SDL.h>
 	<SDL/SDL_image.h>
 	<string>
