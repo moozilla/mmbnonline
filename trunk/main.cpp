@@ -22,10 +22,15 @@
  * Edited: 6/28/2007 at 07:46 PM by Nare
  *
  * -Added the backnextframe variable to make the background animation
+ *
+ * Edited: 6/30/2007 at 07:44 PM by Nare
+ *
+ * -Minor addition: now the program starts centered in the map
  */
 int main ( int argc, char** argv )
 {
     // initialize SDL video
+printf("started\n");
  if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
         printf( "Unable to init SDL: %s\n", SDL_GetError() );
@@ -51,23 +56,22 @@ int main ( int argc, char** argv )
     programPath=buffer; //saves the path in the string
 
     // load a navi
-
+printf(programPath.c_str());
     Navi a(programPath + "\\skin.txt");
-
+printf("Loaded navi\n");
     Background backy(programPath + "\\map.txt", screen);
     bool backnextframe=false; //sets if the background frame changes
-
+printf("Loaded navi\n");
     bool done = false; //this says that it has to do
-    a.move((screen->w - a.naviWidth)/2,(screen->h - 2*a.naviHeight)/2,0,true, true); //puts our little guy STANDING on the center of the screen
     int offsetx=0; //nuff said
     int offsety=0; //nuff said
     int direction=0; //0 facing, 1 right-down 2 right, 3 right-up, 4 back
     Timer fps; //This little thingy lets me keep track of framerating
     bool standing=true; //nuff said
-   // map=flip_surface(map, FLIP_HORIZONTAL);
 
+    a.move((screen->w - a.naviWidth)/2,(screen->h - 2*a.naviHeight)/2,0,true, true); //puts our little guy STANDING on the center of the screen
+    backy.move(backy.backWidth/2-(screen->w/2), backy.backHeight/2-(screen->h/2),false); //centers in the map
     // program main loop
-    backy.move((screen->w)/4, (screen->h)/4,false);
     while (!done)
     {
         fps.start(); //strat the counter for framerating
@@ -142,6 +146,7 @@ int main ( int argc, char** argv )
         backy.move(offsetx,offsety,backnextframe);
         backnextframe= !backnextframe;
         backy.draw(screen);
+        printf("drew background\n");
         a.move(0,0,direction,true, standing); //we move the navi
         a.draw(screen); //we DRAW the navi on the screen
         // DRAWING ENDS HERE
