@@ -19,6 +19,10 @@
  *
  * - modified the move function, it now thakes a bool to know if to move to the next frame
  * - modified the draw function, it now creates the bacgkground correctly
+ *
+ * Edited: 6/30/2007 at 07:44 PM by Nare
+ *
+ * - added boundary limits in the draw function, now it doesn't leave the map area ever
  */
 
 using namespace std;
@@ -176,6 +180,16 @@ void Background::draw(SDL_Surface* g)		{
 	rectscr.y=0;
 	rectscr.w=g->w;
 	rectscr.h=g->h;
+
+    if(backWidth<(backX+g->w)){backX=backWidth-g->w;} //if I moved outside the map, I place it in the border
+    else{
+        if(backX<0){backX=0;} //If I moved outside by the left edge, I place it in the border
+    }
+
+    if(backHeight<(backY+g->h)){backY=backHeight-g->h;} //if I moved outside the map, I place it in the border
+    else{
+        if(backY<0){backY=0;} //If I moved outside by the top edge, I place it in the border
+    }
 
 	rectback.x=(backFrame*backWidth)+backX; //I get the place where I have to start cutting
 	rectback.y=backY;//I get the place where I have to start cutting
