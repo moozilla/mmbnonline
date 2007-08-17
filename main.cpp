@@ -6,6 +6,10 @@
 #include "Timer.h"
 #include "SDL_Func.h"
 #include "background.h"
+
+const int frameRate = 60;  //constant for game frame rate
+const int pixelMovement = (8 * frameRate)/24; //constant for ammount of pixels the navi moves per frame
+const int pixelDiagonalMovement = (4 * frameRate)/24; //constant for ammount of pixels the navi moves per frame when moving digonally
 /*
  * MMBNO Main
  *
@@ -26,6 +30,13 @@
  * Edited: 6/30/2007 at 07:44 PM by Nare
  *
  * -Minor addition: now the program starts centered in the map
+ *
+ * Edited: 8/17/2007 at 08:15 PM by Nare
+ *
+ * -Added constants for frame rate and navi desplacement
+ *
+ * -Added a smoothing framerate for background and Navis
+ *
  */
 int main ( int argc, char** argv )
 {
@@ -60,7 +71,7 @@ printf(programPath.c_str());
     Navi a(programPath + "\\skin.txt");
 printf("Loaded navi\n");
     Background backy(programPath + "\\map.txt", screen);
-    bool backnextframe=false; //sets if the background frame changes
+    bool backnextframe=true; //sets if the background frame changes
 printf("Loaded navi\n");
     bool done = false; //this says that it has to do
     int offsetx=0; //nuff said
@@ -72,6 +83,7 @@ printf("Loaded navi\n");
     a.move((screen->w - a.naviWidth)/2,(screen->h - 2*a.naviHeight)/2,0,true, true); //puts our little guy STANDING on the center of the screen
     backy.move(backy.backWidth/2-(screen->w/2), backy.backHeight/2-(screen->h/2),false); //centers in the map
     // program main loop
+    unsigned char frameCounter=0;
     while (!done)
     {
         fps.start(); //strat the counter for framerating
@@ -94,10 +106,10 @@ printf("Loaded navi\n");
                     // exit if ESCAPE is pressed
                     switch(event.key.keysym.sym)
                     {
-                        case SDLK_DOWN:standing=false; offsety=8;break;
-                        case SDLK_UP:standing=false; offsety=-8;break;
-                        case SDLK_LEFT:standing=false; offsetx=-8;break;
-                        case SDLK_RIGHT:standing=false; offsetx=8;break;
+                        case SDLK_DOWN:standing=false; offsety= pixelMovement;break;
+                        case SDLK_UP:standing=false; offsety=-pixelMovement;break;
+                        case SDLK_LEFT:standing=false; offsetx=-pixelMovement;break;
+                        case SDLK_RIGHT:standing=false; offsetx=pixelMovement;break;
                         case SDLK_ESCAPE:standing=false; done = true;break;
                     }
                 break;
@@ -117,25 +129,25 @@ printf("Loaded navi\n");
       if(offsetx==0){
           switch(offsety){
             case 0: standing=true;break; //isn't moving
-            case 4: offsety=8; direction=0;break; //changed from going diagonally to going sright down
+            case 4: offsety=pixelMovement; direction=0;break; //changed from going diagonally to going sright down
             case 8: direction=0;break; //is going down
-            case -4: offsety=-8; direction=4;break; //changed from going diagonally to going sright up
+            case -4: offsety=-pixelMovement; direction=4;break; //changed from going diagonally to going sright up
             case -8: direction=4;break; //is going up
           }
       }
       else{
         if(offsetx==8){ //goes right
             switch(offsety){
-                case 8:offsety=4;direction=1;break; //is going right-down
+                case 8:offsety=pixelDiagonalMovement;direction=1;break; //is going right-down
                 case 0:direction=2;break; //is going right
-                case -8:offsety=-4;direction=3;break; //is going right-up
+                case -8:offsety=-pixelDiagonalMovement;direction=3;break; //is going right-up
             }
         }
         else{ //goes left
             switch(offsety){
-                case 8:offsety=4;direction=5;break; //is going left-down
+                case 8:offsety=pixelDiagonalMovement;direction=5;break; //is going left-down
                 case 0:direction=6;break; //is going left
-                case -8:offsety=-4;direction=7;break; //is going left-up
+                case -8:offsety=-pixelDiagonalMovement;direction=7;break; //is going left-up
             }
         }
       }
@@ -143,8 +155,10 @@ printf("Loaded navi\n");
 
         // clear screen
 //        SDL_BlitSurface(map, 0, screen, &background); //draw the map, that would CLEAR THE SCREEN
+        if((frameCounter % (frameRate/6))==0){ backnextframe= true;} else {backnextframe= false;}
+
         backy.move(offsetx,offsety,backnextframe);
-        backnextframe= !backnextframe;
+
         backy.draw(screen);
         printf("drew background\n");
         a.move(0,0,direction,true, standing); //we move the navi
@@ -154,10 +168,11 @@ printf("Loaded navi\n");
         SDL_Flip(screen);
 
         //Limit the framerate
-            while( fps.get_ticks() < 1000 / 24 )
+            while( fps.get_ticks() < 1000 / frameRate )
             {
                  //wait...
             }
+            if(frameCounter==frameRate-1){frameCounter=0;}else{frameCounter++;}
 
 
         // finally, update the screen :)
