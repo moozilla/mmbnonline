@@ -1,0 +1,1 @@
+The MMBNOnline Project aims to bring the gameplay of the Mega Man Battle Network Series online. It is currently in a very early stage of development. The code will be made open source as an example for others wanting to make fangames.
